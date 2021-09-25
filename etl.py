@@ -37,9 +37,9 @@ def process_log_file(cur, filepath):
     t = pd.to_datetime(df['ts'],unit='ms')
     
     # insert time data records
-    time_data = list(t.tolist(),t.dt.hour,t.dt.day,t.dt.dayofyear,t.dt.month,t.dt.year,t.dt.weekday)
-    column_labels = list('timestamp','hour', 'day', 'week of year', 'month', 'year','weekday')
-    time_df = pd.DataFrame(time_data, index = column_labels).transpose()
+    time_data = (t.tolist(),t.dt.hour,t.dt.day,t.dt.dayofyear,t.dt.month,t.dt.year,t.dt.weekday)
+    column_labels = ('timestamp','hour', 'day', 'week of year', 'month', 'year','weekday')
+    time_df = pd.DataFrame(list(time_data), index = list(column_labels)).transpose()
 
     for i, row in time_df.iterrows():
         cur.execute(time_table_insert, list(row))
@@ -64,9 +64,8 @@ def process_log_file(cur, filepath):
             songid, artistid = None, None
 
         # insert songplay record
-        songplay_data = (df.ts[index].item(),
-        int(df.userId[index]), df.level[index], songid, artistid,df.sessionId[index].item(), df.location[index],df.userAgent[index])
-        cur.execute(songplay_table_insert, songplay_data)
+        songplay_data = (df.ts[index].item(),int(df.userId[index]), df.level[index], songid, artistid,df.sessionId[index].item(), df.location[index],df.userAgent[index])
+        cur.execute(songplay_table_insert,songplay_data+songplay_data)
 
 
 def process_data(cur, conn, filepath, func):
@@ -89,7 +88,7 @@ def process_data(cur, conn, filepath, func):
 
 
 def main():
-    conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=student password=student")
+    conn = psycopg2.connect("host=127.0.0.1 dbname=sparkifydb user=postgres password=cSE?=RAN123?")
     cur = conn.cursor()
 
     process_data(cur, conn, filepath='data/song_data', func=process_song_file)
